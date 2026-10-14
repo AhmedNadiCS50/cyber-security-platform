@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* Self-hosted fonts (see /public/fonts). Opting for self-hosting instead of
+   next/font/google keeps production builds deterministic — Google Fonts
+   intermittently returns extensionless URLs that break Turbopack builds
+   (vercel/next.js#99114). Cairo is split into Arabic + Latin subsets; the
+   `unicode-range` lets the browser pick the correct file per glyph. */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 1000;
+  src: url('/fonts/cairo-arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 1000;
+  src: url('/fonts/cairo-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('/fonts/space-grotesk-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+:root {
+  --bg-cream: #FFFFFF;
+  --bg-dark: #0A0A0A;
+  --accent-yellow: #FACC15;
+  --accent-blue: #3346F0;
+  --accent-orange: #FF6B00;
+  --card-white: #FFFFFF;
+  --neutral-gray: #F3F4F6;
+}
+
+@theme {
+  --color-cream: #FFFFFF;
+  --color-dark: #0A0A0A;
+  --color-yellow: #FACC15;
+  --color-blue: #3346F0;
+  --color-orange: #FF6B00;
+  --color-gray-neutral: #F3F4F6;
+  --font-cairo: 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-space: 'Space Grotesk', system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--bg-dark);
+  font-family: var(--font-cairo);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Neo-Brutalism Shadows */
+.shadow-brutal {
+  box-shadow: 4px 4px 0px #0A0A0A;
+}
+
+.shadow-brutal-sm {
+  box-shadow: 2px 2px 0px #0A0A0A;
+}
+
+.shadow-brutal-lg {
+  box-shadow: 6px 6px 0px #0A0A0A;
+}
+
+.shadow-brutal-xl {
+  box-shadow: 8px 8px 0px #0A0A0A;
+}
+
+.shadow-brutal-yellow {
+  box-shadow: 4px 4px 0px #FACC15;
+}
+
+.shadow-brutal-blue {
+  box-shadow: 4px 4px 0px #3346F0;
+}
+
+.shadow-brutal-white {
+  box-shadow: 4px 4px 0px #FFFFFF;
+}
+
+/* Neo-Brutalism Interactive Elements */
+.brutal-btn {
+  border: 2px solid #0A0A0A;
+  box-shadow: 4px 4px 0px #0A0A0A;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #0A0A0A;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #0A0A0A;
+}
+
+.brutal-card {
+  border: 3px solid #0A0A0A;
+  background-color: #FFFFFF;
+  box-shadow: 5px 5px 0px #0A0A0A;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brutal-card-hover:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0px #0A0A0A;
+}
+
+/* Cyber Grid Background Motifs */
+.bg-cyber-grid {
+  background-image:
+    linear-gradient(#0A0A0A 1px, transparent 1px),
+    linear-gradient(90deg, #0A0A0A 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.05;
+}
+
+.bg-cyber-grid-light {
+  background-image:
+    linear-gradient(#FACC15 1px, transparent 1px),
+    linear-gradient(90deg, #FACC15 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.08;
+}
+
+/* Custom Scrollbar for Neo-Brutalism */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFFFFF;
+  border-left: 2px solid #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FACC15;
+  border: 2px solid #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3346F0;
+}

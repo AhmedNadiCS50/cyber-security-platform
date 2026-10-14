@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: Is user authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function: Is the user the owner of the document
+    function isOwnerUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper function: Is the user platform admin/owner
+    // The owner is recognised by their verified Google email, by a custom
+    // `role == 'owner'` token claim, or by the role stored on their profile.
+    function isPlatformAdmin() {
+      return isAuthenticated() && (
+        (request.auth.token.email_verified == true &&
+          request.auth.token.email == 'ahmednadics50@gmail.com') ||
+        request.auth.token.role == 'owner' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner'
+      );
+    }
+
+    // 1) Users Collection
+    match /users/{userId} {
+      // Anyone authenticated can read user public fields for leaderboards
+      allow read: if isAuthenticated();
+      
+      // User can create ONLY their own initial profile, and cannot grant
+      // themselves a privileged role or lift a ban (prevents privilege escalation)
+      allow create: if isAuthenticated() && request.auth.uid == userId
+        && request.resource.data.get('role', 'user') == 'user'
+        && request.resource.data.get('banned', false) == false;
+      
+      // Owner can update their own profile + progress, but cannot change role/banned
+      allow update: if isOwnerUser(userId) && (
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'banned'])
+      ) || isPlatformAdmin();
+      
+      // Only platform admin can delete users
+      allow delete: if isPlatformAdmin();
+    }
+
+    // 2) Course Levels & Lessons (Public read, Owner write)
+    match /levels/{levelId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+
+      match /lessons/{lessonId} {
+        allow read: if true;
+        allow write: if isPlatformAdmin();
+      }
+    }
+
+    // 3) Quizzes (Read for questions, write for admin only)
+    match /quizzes/{lessonId} {
+      allow read: if isAuthenticated();
+      allow write: if isPlatformAdmin();
+    }
+
+    // 4) User Progress Tracking
+    match /progress/{userId}/lessons/{lessonId} {
+      allow read: if isOwnerUser(userId);
+      allow write: if isOwnerUser(userId) || isPlatformAdmin();
+    }
+
+    // 5) Daily Challenges
+    match /challenges/{challengeId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+
+    match /challengeSolves/{solveId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isPlatformAdmin();
+    }
+
+    // 6) Certificates (Public read for verification, write by admin only)
+    match /certificates/{certId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+
+    // 7) Settings (e.g. XP values, ranks)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+  }
+}
